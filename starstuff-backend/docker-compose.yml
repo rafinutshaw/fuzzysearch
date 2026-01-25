@@ -1,0 +1,10 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=starstuff_master_key # Always set a key to show security awareness
+      - MEILI_ENV=development
+    volumes:
+      - ./meili_data:/meili_data # Persists data so it doesn't vanish on restart
