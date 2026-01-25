@@ -1,9 +1,9 @@
 import { writable } from 'svelte/store';
-import { searchUseCase, type GroupedResults } from '$lib/core/useCases/searchUseCase';
-import type { SearchResult } from '$lib/core/schemas/searchSchema';
+import { searchUseCase } from '$lib/core/useCases/searchUseCase';
+import type { GroupedSearchResult, RankedSearchResult } from '$lib/core/schemas/searchSchema';
 
 interface SearchState {
-	results: SearchResult[] | GroupedResults | null;
+	results: RankedSearchResult | GroupedSearchResult | null;
 	loading: boolean;
 	error: string | null;
 	mode: 'ranked' | 'grouped';

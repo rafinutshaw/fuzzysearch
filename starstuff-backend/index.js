@@ -38,8 +38,15 @@ app.get("/api/search/ranked", async (req, res) => {
 
     // Meilisearch returns a single 'hits' array in the root of the response
     res.json({
-      hits: response.hits,
+      hits: response.hits.map((hit) => ({
+        id: hit.id,
+        title: hit.title,
+        sub: hit.sub,
+        avatar: hit.avatar,
+        type: hit._federation.indexUid,
+      })),
       totalHits: response.estimatedTotalHits,
+      totalPages: response.totalPages,
       page: parseInt(page),
       hitsPerPage: parseInt(hitsPerPage),
     });
@@ -78,27 +85,30 @@ app.get("/api/search/grouped", async (req, res) => {
         },
       ],
     });
-
-    res.json({
+    const result = {
       users: {
         hits: results[0].hits,
+        totalHits: results[0].totalHits,
         totalPages: results[0].totalPages,
         page: results[0].page,
         hitsPerPage: parseInt(limit),
       },
       spaces: {
         hits: results[1].hits,
+        totalHits: results[1].totalHits,
         totalPages: results[1].totalPages,
         page: results[1].page,
         hitsPerPage: parseInt(limit),
       },
       communities: {
         hits: results[2].hits,
+        totalHits: results[2].totalHits,
         totalPages: results[2].totalPages,
         page: results[2].page,
         hitsPerPage: parseInt(limit),
       },
-    });
+    };
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

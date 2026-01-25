@@ -1,9 +1,13 @@
 import { searchService } from '../services/SearchService';
-import { SearchResultSchema, type SearchResult } from '../schemas/searchSchema';
+import {
+	GroupedSearchResultSchema,
+	RankedSearchResultSchema,
+	type GroupedSearchResult,
+	type RankedSearchResult
+} from '../schemas/searchSchema';
 import { z } from 'zod';
 
 // Define a type for the Grouped result structure
-export type GroupedResults = Record<string, SearchResult[]>;
 
 /**
  * Orchestrates the search flow:
@@ -12,31 +16,15 @@ export type GroupedResults = Record<string, SearchResult[]>;
 export async function searchUseCase(
 	query: string,
 	mode: 'ranked' | 'grouped'
-): Promise<SearchResult[] | GroupedResults> {
-	// 1. Call the Service
-	const rawData = await searchService.fetchFromApi(query);
+): Promise<RankedSearchResult | GroupedSearchResult> {
+	let rawData;
+	if (mode === 'ranked') rawData = await searchService.fetchRankedResults(query);
+	else rawData = await searchService.fetchGroupedResults(query);
 
-	// 2. Validate the data using the Zod Schema
-	// This ensures the API response matches our TypeScript expectations
-	const validatedData = z.array(SearchResultSchema).parse(rawData);
+	const schema = mode === 'ranked' ? RankedSearchResultSchema : GroupedSearchResultSchema;
 
-	// 3. Apply Business Logic / Transformations
-	if (mode === 'grouped') {
-		return transformToGroups(validatedData);
-	}
-
+	// .parse returns the data with the correct TypeScript type inferred
+	const validatedData = schema.parse(rawData);
 	// Return ranked (flat) results
 	return validatedData;
-}
-
-/**
- * Helper logic specific to the business requirement of "Grouped" results
- */
-function transformToGroups(data: SearchResult[]): GroupedResults {
-	return data.reduce((acc, item) => {
-		const key = item.category;
-		if (!acc[key]) acc[key] = [];
-		acc[key].push(item);
-		return acc;
-	}, {} as GroupedResults);
 }

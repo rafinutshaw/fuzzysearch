@@ -3,3 +3,4 @@ starstuff-backend/node_modules
 starstuff-backend/starstuff.db
 starstuff-frontend/.svelte-kit
 starstuff-frontend/node_modules
+starstuff-backend/starstuff.db

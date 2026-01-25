@@ -1,13 +1,12 @@
 <script lang="ts">
+	import type { GroupedSearchResult, RankedSearchResult } from '$lib/core/schemas/searchSchema';
   import Paginator from './Paginator.svelte';
-  import type { SearchResult } from '$lib/core/schemas/searchSchema';
-  import type { GroupedResults } from '$lib/core/useCases/searchUseCase';
 
-  export let results: SearchResult[] | GroupedResults | null;
+
+  export let results: RankedSearchResult | GroupedSearchResult | null;
   export let mode: 'ranked' | 'grouped';
-
   // Type Guard
-  function isGrouped(res: any): res is GroupedResults {
+  function isGrouped(res: any): res is GroupedSearchResult {
     return mode === 'grouped' && res !== null && !Array.isArray(res);
   }
 </script>
@@ -28,16 +27,16 @@
             </h3>
             <div class="flex items-center gap-3">
               <span class="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-500 rounded-md">
-                {items.length} hits
+                {items.hits.length} hits
               </span>
               <span class="transition-transform group-open:rotate-180 text-slate-400">▼</span>
             </div>
           </summary>
           <div class="p-4 bg-slate-50/50 border-t border-slate-100">
             <div class="space-y-2 mb-4">
-              {#each items as item}
+              {#each items.hits as item}
                 <div class="p-3 bg-white border border-slate-200 rounded-lg text-slate-700 shadow-sm">
-                  {item.name}
+                  {item.title}
                 </div>
               {/each}
             </div>
@@ -49,11 +48,11 @@
   {:else}
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
       <div class="divide-y divide-slate-100">
-        {#each results as item}
+        {#each results.hits as item}
           <div class="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center">
-            <span class="font-semibold text-slate-800">{item.name}</span>
+            <span class="font-semibold text-slate-800">{item.title}</span>
             <span class="text-xs font-bold text-blue-500 uppercase tracking-wider bg-blue-50 px-2 py-1 rounded">
-              {item.category}
+              {item.type}
             </span>
           </div>
         {/each}
