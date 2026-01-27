@@ -5,7 +5,6 @@ import {
 	type GroupedSearchResult,
 	type RankedSearchResult
 } from '../schemas/searchSchema';
-import { z } from 'zod';
 
 // Define a type for the Grouped result structure
 
@@ -13,18 +12,25 @@ import { z } from 'zod';
  * Orchestrates the search flow:
  * Fetch -> Validate -> Transform
  */
-export async function searchUseCase(
+export async function rankedSearchUseCase(
 	query: string,
-	mode: 'ranked' | 'grouped'
+	page: number
 ): Promise<RankedSearchResult | GroupedSearchResult> {
-	let rawData;
-	if (mode === 'ranked') rawData = await searchService.fetchRankedResults(query);
-	else rawData = await searchService.fetchGroupedResults(query);
-
-	const schema = mode === 'ranked' ? RankedSearchResultSchema : GroupedSearchResultSchema;
-
+	let rawData = await searchService.fetchRankedResults(query, page);
 	// .parse returns the data with the correct TypeScript type inferred
-	const validatedData = schema.parse(rawData);
+	const validatedData = RankedSearchResultSchema.parse(rawData);
+	// Return ranked (flat) results
+	return validatedData;
+}
+
+export async function groupedSearchUseCase(
+	query: string,
+	page: number,
+	index: string
+): Promise<RankedSearchResult | GroupedSearchResult> {
+	let rawData = await searchService.fetchGroupedResults(query, page, index);
+	// .parse returns the data with the correct TypeScript type inferred
+	const validatedData = GroupedSearchResultSchema.parse(rawData);
 	// Return ranked (flat) results
 	return validatedData;
 }

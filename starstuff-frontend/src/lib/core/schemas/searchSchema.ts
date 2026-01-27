@@ -22,14 +22,15 @@ export const RankedSearchResultSchema = BasePaginationSchema.extend({
 export const GroupedSearchResultSchema = z.object({
 	users: BasePaginationSchema.extend({
 		hits: z.array(SearchResultSchema)
-	}),
+	}).optional(),
 	spaces: BasePaginationSchema.extend({
 		hits: z.array(SearchResultSchema)
-	}),
+	}).optional(),
 	communities: BasePaginationSchema.extend({
 		hits: z.array(SearchResultSchema)
-	})
+	}).optional()
 });
 
+export type SearchItems = z.infer<typeof SearchResultSchema>;
 export type RankedSearchResult = z.infer<typeof RankedSearchResultSchema>;
 export type GroupedSearchResult = z.infer<typeof GroupedSearchResultSchema>;

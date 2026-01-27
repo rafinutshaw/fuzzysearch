@@ -36,8 +36,7 @@ app.get("/api/search/ranked", async (req, res) => {
       ],
     });
 
-    // Meilisearch returns a single 'hits' array in the root of the response
-    res.json({
+    const result = {
       hits: response.hits.map((hit) => ({
         id: hit.id,
         title: hit.title,
@@ -46,45 +45,74 @@ app.get("/api/search/ranked", async (req, res) => {
         type: hit._federation.indexUid,
       })),
       totalHits: response.estimatedTotalHits,
-      totalPages: response.totalPages,
+      totalPages: Math.ceil(response.estimatedTotalHits / hitsPerPage),
       page: parseInt(page),
       hitsPerPage: parseInt(hitsPerPage),
-    });
+    };
+    // Meilisearch returns a single 'hits' array in the root of the response
+    res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 app.get("/api/search/grouped", async (req, res) => {
-  const { q, uPage = 1, sPage = 1, cPage = 1 } = req.query;
+  const { q, page = 1, index = "" } = req.query;
   const limit = 3; // Keep the grouped view dense
 
   try {
-    const { results } = await meiliClient.multiSearch({
-      queries: [
+    let queries = [];
+    if (index === undefined || !index || index.length === 0) {
+      queries = [
         {
           indexUid: "users",
           q,
           hitsPerPage: limit,
-          page: parseInt(uPage),
+          page: parseInt(page),
           attributesToHighlight: ["title"],
         },
         {
           indexUid: "spaces",
           q,
           hitsPerPage: limit,
-          page: parseInt(sPage),
+          page: parseInt(page),
           attributesToHighlight: ["title"],
         },
         {
           indexUid: "communities",
           q,
           hitsPerPage: limit,
-          page: parseInt(cPage),
+          page: parseInt(page),
           attributesToHighlight: ["title"],
         },
-      ],
+      ];
+    } else {
+      queries = [
+        {
+          indexUid: index,
+          q,
+          hitsPerPage: limit,
+          page: parseInt(page),
+          attributesToHighlight: ["title"],
+        },
+      ];
+    }
+
+    const { results } = await meiliClient.multiSearch({
+      queries,
     });
+    if (index) {
+      res.json({
+        [index]: {
+          hits: results[0].hits,
+          totalHits: results[0].totalHits,
+          totalPages: results[0].totalPages,
+          page: results[0].page,
+          hitsPerPage: parseInt(limit),
+        },
+      });
+      return;
+    }
     const result = {
       users: {
         hits: results[0].hits,

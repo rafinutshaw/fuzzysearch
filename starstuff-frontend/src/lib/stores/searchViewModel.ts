@@ -1,30 +1,71 @@
-import { writable } from 'svelte/store';
-import { searchUseCase } from '$lib/core/useCases/searchUseCase';
+import { get, writable } from 'svelte/store';
+import { groupedSearchUseCase, rankedSearchUseCase } from '$lib/core/useCases/searchUseCase';
 import type { GroupedSearchResult, RankedSearchResult } from '$lib/core/schemas/searchSchema';
 
 interface SearchState {
 	results: RankedSearchResult | GroupedSearchResult | null;
 	loading: boolean;
 	error: string | null;
-	mode: 'ranked' | 'grouped';
+	loadingIndex: string;
 }
 
 function createSearchStore() {
-	const { subscribe, set, update } = writable<SearchState>({
+	const { subscribe, update } = writable<SearchState>({
 		results: null,
 		loading: false,
 		error: null,
-		mode: 'ranked'
+		loadingIndex: ''
 	});
 
 	return {
 		subscribe,
-		async executeSearch(query: string, mode: 'ranked' | 'grouped') {
-			update((s) => ({ ...s, loading: true, error: null, mode }));
+		getCurrentState: () => get({ subscribe }),
+		async executeRankedSearch(query: string, page: number = 1) {
+			update((s) => ({ ...s, loading: true, error: null, query, mode: 'ranked' }));
 
 			try {
-				const data = await searchUseCase(query, mode);
-				update((s) => ({ ...s, results: data, loading: false }));
+				const data = await rankedSearchUseCase(query, page);
+				update((s) => ({ ...s, results: data, loading: false, mode: 'ranked' }));
+			} catch (err: any) {
+				update((s) => ({
+					...s,
+					error: err.message,
+					loading: false,
+					results: null,
+					mode: 'ranked'
+				}));
+			}
+		},
+
+		async executeGroupedSearch(query: string, page: number = 1, loadingIndex: string = '') {
+			update((s) => ({
+				...s,
+				loading: loadingIndex === '',
+				error: null,
+				query,
+				mode: 'grouped',
+				loadingIndex
+			}));
+
+			try {
+				const data = await groupedSearchUseCase(query, page, loadingIndex);
+				if (!loadingIndex)
+					update((s) => ({
+						...s,
+						results: data,
+						loading: false,
+						mode: 'grouped',
+						loadingIndex: ''
+					}));
+				else {
+					update((s) => ({
+						...s,
+						results: { ...s.results, ...data },
+						loading: false,
+						mode: 'grouped',
+						loadingIndex: ''
+					}));
+				}
 			} catch (err: any) {
 				update((s) => ({ ...s, error: err.message, loading: false, results: null }));
 			}
