@@ -4,3 +4,5 @@ starstuff-backend/starstuff.db
 starstuff-frontend/.svelte-kit
 starstuff-frontend/node_modules
 starstuff-backend/starstuff.db
+starstuff-backend/.env
+starstuff-backend/dist

@@ -13,6 +13,6 @@
 
 		<Search />
 
-		<Results results={$searchStore.results} />
+		<Results />
 	</main>
 </div>

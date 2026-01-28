@@ -9,6 +9,34 @@ const meiliClient = new MeiliSearch({
 });
 
 const seedDatabase = async () => {
+  console.log("🏗️ Ensuring tables exist...");
+
+  // 1. Drop tables if they exist (order matters if you have Foreign Keys!)
+  db.exec(`
+    DROP TABLE IF EXISTS users;
+    DROP TABLE IF EXISTS spaces;
+    DROP TABLE IF EXISTS communities;
+  `);
+  db.exec(`
+    CREATE TABLE  users (
+      id TEXT PRIMARY KEY ,
+      title TEXT NOT NULL,
+      sub TEXT NOT NULL,
+      avatar NOT NULL
+    );
+
+    CREATE TABLE  spaces (
+      id TEXT PRIMARY KEY ,
+      title TEXT NOT NULL,
+      sub TEXT NOT NULL
+    );
+
+    CREATE TABLE  communities (
+     id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      sub TEXT NOT NULL
+    );
+  `);
   console.log("🧹 Cleaning old data...");
 
   // 1. Clean SQLite
@@ -21,7 +49,7 @@ const seedDatabase = async () => {
 
   // 2. Clean Meilisearch
   // Deleting the index is the fastest way to "reset"
-  const indexesToReset = ["users", "spaces", "communities", "suggestions"];
+  const indexesToReset = ["users", "spaces", "communities"];
   for (const uid of indexesToReset) {
     try {
       await meiliClient.deleteIndex(uid);
@@ -31,9 +59,10 @@ const seedDatabase = async () => {
   }
 
   console.log("🚀 Generating new mock data...");
-  const users = [];
-  const spaces = [];
-  const communities = [];
+  const users: { id: string; title: string; sub: string; avatar: string }[] =
+    [];
+  const spaces: { id: string; title: string; sub: string }[] = [];
+  const communities: { id: string; title: string; sub: string }[] = [];
 
   for (let i = 0; i < 4000; i++) {
     users.push({
@@ -76,14 +105,6 @@ const seedDatabase = async () => {
   await meiliClient.index("users").addDocuments(users);
   await meiliClient.index("spaces").addDocuments(spaces);
   await meiliClient.index("communities").addDocuments(communities);
-
-  // 5. Create the "Google-style" Suggestions Index
-  const suggestions = [
-    ...users.map((u) => ({ id: `s-${u.id}`, query: u.title })),
-    ...spaces.map((c) => ({ id: `s-${c.id}`, query: c.title })),
-    ...communities.map((c) => ({ id: `s-${c.id}`, query: c.title })),
-  ];
-  await meiliClient.index("suggestions").addDocuments(suggestions);
 
   console.log("✨ Seed complete: 10,000 records synchronized.");
 };

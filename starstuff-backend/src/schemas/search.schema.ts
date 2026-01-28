@@ -1,0 +1,48 @@
+// src/schemas/search.schema.ts
+import { z } from "zod";
+
+export const SearchQuerySchema = z.object({
+  query: z.object({
+    q: z.string().min(3, "Query must be at least 3 characters").default(""),
+    page: z.coerce.number().int().positive().default(1),
+    index: z.string().optional().default(""),
+  }),
+});
+
+// Create a type from the schema for use in controllers
+export type SearchQuery = z.infer<typeof SearchQuerySchema>["query"];
+
+const BasePaginationSchema = z.object({
+  totalHits: z.number().int().nonnegative(),
+  totalPages: z.number().int().nonnegative(),
+  page: z.number().int().min(1),
+  hitsPerPage: z.number().int().min(1).max(100),
+});
+
+const SearchResultSchema = z.object({
+  id: z.uuid(), // Validates it's a proper UUID string
+  title: z.string(), // "Anderson - Mraz"
+  sub: z.string(), // "Community"
+  avatar: z.string().optional(),
+  type: z.enum(["users", "spaces", "communities"]).optional(),
+});
+
+export const RankedSearchResultSchema = BasePaginationSchema.extend({
+  hits: z.array(SearchResultSchema),
+});
+
+export const GroupedSearchResultSchema = z.object({
+  users: BasePaginationSchema.extend({
+    hits: z.array(SearchResultSchema),
+  }).optional(),
+  spaces: BasePaginationSchema.extend({
+    hits: z.array(SearchResultSchema),
+  }).optional(),
+  communities: BasePaginationSchema.extend({
+    hits: z.array(SearchResultSchema),
+  }).optional(),
+});
+
+export type SearchItems = z.infer<typeof SearchResultSchema>;
+export type RankedSearchResult = z.infer<typeof RankedSearchResultSchema>;
+export type GroupedSearchResult = z.infer<typeof GroupedSearchResultSchema>;

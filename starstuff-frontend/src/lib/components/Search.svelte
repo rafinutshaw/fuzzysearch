@@ -40,6 +40,7 @@
 				<input
 					id="search"
 					type="text"
+					defaultValue={query}
 					bind:value={query}
 					onblur={() => (touched = true)}
 					placeholder="Enter at least 3 characters..."
