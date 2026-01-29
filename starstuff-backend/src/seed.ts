@@ -1,14 +1,10 @@
-const Database = require("better-sqlite3");
-const { MeiliSearch } = require("meilisearch");
-const { faker } = require("@faker-js/faker");
+import { meiliClient } from "./config/meilisearch.js";
+import Database from "better-sqlite3";
+import { faker } from "@faker-js/faker";
 
-const db = new Database("starstuff.db");
-const meiliClient = new MeiliSearch({
-  host: "http://127.0.0.1:7700",
-  apiKey: "starstuff_master_key",
-});
+export const db = new Database("starstuff.db");
 
-const seedDatabase = async () => {
+export const seedDatabase = async () => {
   console.log("🏗️ Ensuring tables exist...");
 
   // 1. Drop tables if they exist (order matters if you have Foreign Keys!)
@@ -108,5 +104,3 @@ const seedDatabase = async () => {
 
   console.log("✨ Seed complete: 10,000 records synchronized.");
 };
-
-module.exports = { db, seedDatabase, meiliClient };

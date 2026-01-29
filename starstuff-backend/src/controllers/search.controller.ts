@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { SearchService } from "../services/search.service";
 import {
-  GroupedSearchResult,
   RankedSearchResult,
   SearchQuery,
-} from "../schemas/search.schema";
+  GroupedSearchResult,
+} from "../schemas/search.schema.js";
+import { SearchService } from "../services/search.service.js";
 
 export const getRanked = async (
   req: Request,

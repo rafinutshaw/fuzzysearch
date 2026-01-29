@@ -1,0 +1,51 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_MASTER_KEY=starstuff_master_key
+      - MEILI_ENV=development
+    volumes:
+      - ./meili_data:/meili_data
+
+  backend:
+      build: 
+        context: ./starstuff-backend
+        dockerfile: Dockerfile
+      container_name: starstuff-backend
+      restart: always
+      ports:
+        - "3000:3000" 
+      env_file:
+        - ./starstuff-backend/.env
+      environment:
+        - MEILI_HOST=http://meilisearch:7700
+      depends_on:
+        - meilisearch
+  
+  #  dev
+  # backend:
+  #   build: ./starstuff-backend
+  #   container_name: starstuff-backend
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./starstuff-backend:/app
+  #     - /app/node_modules
+  #   env_file:
+  #     - ./starstuff-backend/.env
+  #   environment:
+  #     - MEILI_HOST=http://meilisearch:7700
+  #   command: npm run dev    
+  #   depends_on:
+  #     - meilisearch
+
+  frontend:
+      build: ./starstuff-frontend
+      container_name: starstuff-frontend
+      ports:
+        - "5173:5173"
+      environment:
+        - PORT=5173

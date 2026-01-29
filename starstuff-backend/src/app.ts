@@ -1,11 +1,10 @@
 import express from "express";
-import searchRoutes from "./routes/search.routes";
+import cors from "cors";
+import searchRoutes from "./routes/search.routes.js";
+import { seedDatabase } from "./seed.js";
 
 const app = express();
-const cors = require("cors");
 app.use(cors());
-
-const { seedDatabase } = require("./seed");
 
 // Middleware to parse JSON
 app.use(express.json());

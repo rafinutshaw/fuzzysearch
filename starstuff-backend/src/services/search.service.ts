@@ -1,8 +1,8 @@
-import { meiliClient } from "../config/meilisearch";
+import { meiliClient } from "../config/meilisearch.js";
 import {
   GroupedSearchResult,
   RankedSearchResult,
-} from "../schemas/search.schema";
+} from "../schemas/search.schema.js";
 
 export class SearchService {
   static async getRankedResults(
