@@ -20,6 +20,15 @@ function createSearchStore() {
 	return {
 		subscribe,
 		getCurrentState: () => get({ subscribe }),
+		clearSearch() {
+			update((s) => ({
+				...s,
+				results: null,
+				loading: false,
+				error: null,
+				loadingIndex: ''
+			}));
+		},
 		async executeRankedSearch(query: string, page: number = 1) {
 			update((s) => ({ ...s, loading: true, error: null, query, mode: 'ranked' }));
 

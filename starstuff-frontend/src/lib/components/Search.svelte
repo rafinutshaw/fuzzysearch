@@ -28,6 +28,15 @@
 				: searchStore.executeGroupedSearch(query);
 		}
 	}
+
+	async function handleClear() {
+		query = '';
+		touched = false;
+		searchStore.clearSearch();
+		await goto('/', { keepFocus: true, noScroll: true });
+	}
+
+	let showClearIcon = $derived(query.length > 0);
 </script>
 
 <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -37,15 +46,36 @@
 				<label for="search" class="mb-2 ml-1 block text-xs font-bold text-slate-500 uppercase"
 					>Search Query</label
 				>
-				<input
-					id="search"
-					type="text"
-					defaultValue={query}
-					bind:value={query}
-					onblur={() => (touched = true)}
-					placeholder="Enter at least 3 characters..."
-					class="w-full rounded-lg border border-slate-300 px-4 py-3 transition-all outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
-				/>
+				<div class="relative">
+					<input
+						id="search"
+						type="text"
+						defaultValue={query}
+						bind:value={query}
+						onblur={() => (touched = true)}
+						placeholder="Enter at least 3 characters..."
+						class="w-full rounded-lg border border-slate-300 py-3 pr-10 pl-4 transition-all outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+					/>
+					{#if showClearIcon}
+						<button
+							type="button"
+							onclick={handleClear}
+							class="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center rounded p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+							title="Clear search"
+							aria-label="Clear search"
+						>
+							<svg
+								class="h-5 w-5"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								stroke-width="2"
+							>
+								<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</button>
+					{/if}
+				</div>
 			</div>
 
 			<div class="md:col-span-3">
