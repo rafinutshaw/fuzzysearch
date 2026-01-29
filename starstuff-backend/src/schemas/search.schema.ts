@@ -1,4 +1,3 @@
-// src/schemas/search.schema.ts
 import { z } from "zod";
 
 export const SearchQuerySchema = z.object({
@@ -9,7 +8,6 @@ export const SearchQuerySchema = z.object({
   }),
 });
 
-// Create a type from the schema for use in controllers
 export type SearchQuery = z.infer<typeof SearchQuerySchema>["query"];
 
 const BasePaginationSchema = z.object({
@@ -20,9 +18,9 @@ const BasePaginationSchema = z.object({
 });
 
 const SearchResultSchema = z.object({
-  id: z.uuid(), // Validates it's a proper UUID string
-  title: z.string(), // "Anderson - Mraz"
-  sub: z.string(), // "Community"
+  id: z.uuid(),
+  title: z.string(),
+  sub: z.string(),
   avatar: z.string().optional(),
   type: z.enum(["users", "spaces", "communities"]).optional(),
 });

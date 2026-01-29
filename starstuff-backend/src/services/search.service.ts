@@ -55,7 +55,6 @@ export class SearchService {
 
     const { results } = await meiliClient.multiSearch({ queries });
 
-    // Reduce results into a keyed object { users: {...}, spaces: {...} }
     return indexUids.reduce((acc, uid, i) => {
       acc[uid] = {
         hits: results[i].hits,

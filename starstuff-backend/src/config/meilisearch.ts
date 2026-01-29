@@ -1,4 +1,3 @@
-// src/config/meilisearch.ts
 import { MeiliSearch } from "meilisearch";
 import dotenv from "dotenv";
 

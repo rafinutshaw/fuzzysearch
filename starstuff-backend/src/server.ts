@@ -8,7 +8,6 @@ const server = app.listen(PORT, () => {
   console.log(`🚀 Server is sprinting at http://localhost:${PORT}`);
 });
 
-// Handle graceful shutdowns (Optional but recommended)
 process.on("SIGTERM", () => {
   console.log("SIGTERM signal received: closing HTTP server");
   server.close(() => {
