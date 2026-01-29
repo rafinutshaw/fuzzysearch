@@ -1,10 +1,12 @@
+import { env } from '$env/dynamic/public';
 import type { GroupedSearchResult, RankedSearchResult } from '../schemas/searchSchema';
+
+const API_BASE = env.BACKEND_API_URL ?? 'http://localhost:3000';
 
 export class SearchService {
 	async fetchRankedResults(query: string, page: number): Promise<RankedSearchResult> {
-		// Replace with actual fetch logic
 		const response = await fetch(
-			`http://localhost:3000/api/search/ranked?q=${query}&&page=${page}`
+			`${API_BASE}/api/search/ranked?q=${encodeURIComponent(query)}&page=${page}`
 		);
 		if (!response.ok) throw new Error('Network error');
 		return response.json();
@@ -14,9 +16,8 @@ export class SearchService {
 		page: number,
 		index: string
 	): Promise<GroupedSearchResult> {
-		// Replace with actual fetch logic
 		const response = await fetch(
-			`http://localhost:3000/api/search/grouped?q=${query}&&page=${page}&&index=${index}`
+			`${API_BASE}/api/search/grouped?q=${encodeURIComponent(query)}&page=${page}&index=${encodeURIComponent(index)}`
 		);
 		if (!response.ok) throw new Error('Network error');
 		return response.json();

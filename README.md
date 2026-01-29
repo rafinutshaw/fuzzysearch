@@ -161,7 +161,7 @@ Copy `starstuff-backend/.env.example` to `starstuff-backend/.env` and set these 
 ## Optional: Running Without Docker
 
 - **Backend:** `cd starstuff-backend && npm install && npm run dev`. Ensure Meilisearch is running (e.g. Docker) and `MEILI_HOST` points to it.
-- **Frontend:** `cd starstuff-frontend && npm install && npm run dev`. Set or proxy API base URL to `http://localhost:3000` if needed (e.g. in `SearchService.ts`).
+- **Frontend:** `cd starstuff-frontend && npm install && npm run dev`.
 
 ---
 
