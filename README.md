@@ -27,18 +27,26 @@ https://github.com/user-attachments/assets/f9b99ecb-0ae2-4900-989e-b1b831966209
      ```
    - Adjust values if needed (defaults work with the Compose setup).
 
-2. **Run everything with Docker Compose** (from the **project root**):
+2. **Frontend environment**
+   - Go to `starstuff-frontend/`.
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Adjust values if needed (defaults work with the Compose setup).
+
+3. **Run everything with Docker Compose** (from the **project root**):
 
    ```bash
    docker-compose up --build
    ```
 
-3. **Access the app**
+4. **Access the app**
    - **Frontend:** [http://localhost:5173](http://localhost:5173)
    - **Backend API:** [http://localhost:3000](http://localhost:3000)
    - **Meilisearch:** [http://localhost:7700](http://localhost:7700) (optional; for debugging)
 
-4. **Stop**
+5. **Stop**
    ```bash
    docker-compose down
    ```
@@ -222,6 +230,7 @@ starstuff/
 │       ├── services/
 │       └── seed.ts
 └── starstuff-frontend/     # SvelteKit + Tailwind
+│   ├── .env.example
     ├── Dockerfile
     ├── package.json
     ├── svelte.config.js
