@@ -37,7 +37,7 @@ A full-stack fuzzy search application with **ranked** and **grouped** result vie
    docker-compose down
    ```
 
-On startup, the backend seeds SQLite and Meilisearch with ~10,000 mock records (users, spaces, communities). Use the search box with at least 3 characters and switch between **Ranked List** and **Grouped Accordion** modes.
+On startup, the backend seeds SQLite and Meilisearch with ~10,000 mock records (users, spaces, communities). Use the search box to search and switch between **Ranked List** and **Grouped List** modes.
 
 ---
 
