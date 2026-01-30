@@ -12,7 +12,7 @@
 	{#if !loading}
 		{#each items as item}
 			<div class="flex items-center justify-between p-4 transition-colors hover:bg-slate-50">
-				<span class="font-semibold text-slate-800">{item.title}</span>
+				<span class="font-semibold text-slate-800">{item.title} <span class="text-xs"> (Rank: {item.popularity})</span></span>
 				{#if item.type}
 					<span
 						class="rounded bg-blue-50 px-2 py-1 text-xs font-bold tracking-wider text-blue-500 uppercase"

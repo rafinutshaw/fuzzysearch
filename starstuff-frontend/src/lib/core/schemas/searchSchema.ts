@@ -11,7 +11,8 @@ const SearchResultSchema = z.object({
 	id: z.uuid(), // Validates it's a proper UUID string
 	title: z.string(), // "Anderson - Mraz"
 	avatar: z.string().optional(),
-	type: z.enum(['users', 'spaces', 'communities']).optional()
+	type: z.enum(['users', 'spaces', 'communities']).optional(),
+	popularity: z.number().int().nonnegative().optional()
 });
 
 export const RankedSearchResultSchema = BasePaginationSchema.extend({

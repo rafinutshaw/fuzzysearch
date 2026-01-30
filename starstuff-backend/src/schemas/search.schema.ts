@@ -22,6 +22,7 @@ const SearchResultSchema = z.object({
   title: z.string(),
   avatar: z.string().optional(),
   type: z.enum(["users", "spaces", "communities"]).optional(),
+  popularity: z.number().int().nonnegative().optional(),
 });
 
 export const RankedSearchResultSchema = BasePaginationSchema.extend({

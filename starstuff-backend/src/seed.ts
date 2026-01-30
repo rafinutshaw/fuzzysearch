@@ -56,7 +56,7 @@ export const seedDatabase = async () => {
         type === "user"
           ? faker.person.fullName()
           : type === "space"
-            ? faker.commerce.department() + " Space"
+            ? `${faker.commerce.department()} ${faker.company.buzzAdjective()}`
             : faker.company.name(),
       avatar: type === "user" ? faker.image.avatar() : undefined,
       popularity: faker.number.int({ min: 0, max: 10000 }),
