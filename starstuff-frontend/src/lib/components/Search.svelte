@@ -89,10 +89,4 @@
 			</div>
 		</div>
 	</form>
-
-	{#if $hasValidationError}
-		<p class="mt-3 flex items-center gap-1 text-sm font-medium text-red-500">
-			<span>⚠️</span> Invalid query: please enter at least 3 characters.
-		</p>
-	{/if}
 </div>

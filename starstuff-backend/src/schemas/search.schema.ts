@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const SearchQuerySchema = z.object({
   query: z.object({
-    q: z.string().min(3, "Query must be at least 3 characters").default(""),
+    q: z.string().min(1, "Query must be at least 1 character").default(""),
     page: z.coerce.number().int().positive().default(1),
     index: z.string().optional().default(""),
   }),
@@ -20,7 +20,6 @@ const BasePaginationSchema = z.object({
 const SearchResultSchema = z.object({
   id: z.uuid(),
   title: z.string(),
-  sub: z.string(),
   avatar: z.string().optional(),
   type: z.enum(["users", "spaces", "communities"]).optional(),
 });

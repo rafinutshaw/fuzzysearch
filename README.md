@@ -124,6 +124,36 @@ So: network or validation errors are caught, stored, and shown; success path is 
 
 ---
 
+## 🔍 Search Strategy: The "Command Center" Logic
+
+To ensure the search feels like a native OS tool (e.g., Spotlight or Raycast), the system adapts its search behavior based on the length of the query string.
+
+### 1. Instant Results (< 3 Characters)
+
+The system responds to the **very first keystroke** to eliminate "dead air" in the UI.
+
+- **The Strategy:** Exact Prefix Matching + `popularity:desc` sort.
+- **Matching Strategy:** Uses `matchingStrategy: "all"` to ensure strict results.
+- **Goal:** Surface the most popular content starting with those letters (e.g., typing "S" immediately finds the most popular communities like "Starstuff Cafe").
+
+### 2. Fuzzy Recall (≥ 3 Characters)
+
+As the user provides more "signal," the system shifts toward a high-recall strategy to handle complex intents.
+
+- **Matching Strategy (`last`):** If a long phrase like "Stardust Coffee Shop" yields no results, the engine automatically drops the last word to find "Stardust Coffee," preventing "No Results" dead-ends.
+- **Typo Tolerance:** At this length, the engine allows 1-2 typos (e.g., "Strstuff" still finds "Starstuff").
+
+### 3. Ranking Rules (The Tie-Breaker)
+
+Meilisearch processes results through a **Bucket Sort** hierarchy. If two items match the query equally, the **Popularity Score** (seeded 0-10,000) acts as the final tie-breaker.
+
+1. **Words:** Matches the most query terms.
+2. **Typo:** Fewest typos.
+3. **Proximity:** Terms closest together.
+4. **Attribute:** Matches in `title` beat matches in descriptions.
+5. **Sort:** **Contextual Popularity** (Ensures "hot" content wins).
+6. **Exactness:** Closest literal match to the input.
+
 ## Why Meilisearch Here (≈10k Rows) & When to Consider Elasticsearch (≈10M Rows)
 
 ### Meilisearch for ~10,000 rows

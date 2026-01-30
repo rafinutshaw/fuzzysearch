@@ -10,7 +10,6 @@ const BasePaginationSchema = z.object({
 const SearchResultSchema = z.object({
 	id: z.uuid(), // Validates it's a proper UUID string
 	title: z.string(), // "Anderson - Mraz"
-	sub: z.string(), // "Community"
 	avatar: z.string().optional(),
 	type: z.enum(['users', 'spaces', 'communities']).optional()
 });

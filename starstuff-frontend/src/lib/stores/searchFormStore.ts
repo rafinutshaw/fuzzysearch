@@ -3,7 +3,7 @@ import { derived, writable } from 'svelte/store';
 import { goto } from '$app/navigation';
 import { searchStore } from './searchViewModel';
 
-export const MIN_QUERY_LENGTH = 3;
+export const MIN_QUERY_LENGTH = 1;
 const DEFAULT_DEBOUNCE_MS = 350;
 
 export type ViewMode = 'ranked' | 'grouped';
@@ -56,7 +56,10 @@ function scheduleDebouncedSearch(getCurrentUrl: () => URL, debounceMs: number): 
 	cancelDebounce();
 	const q = get(queryStore).trim();
 	const mode = get(viewModeStore);
-	if (q.length < MIN_QUERY_LENGTH) return;
+	if (q.length < MIN_QUERY_LENGTH) {
+		handleClear();
+		return;
+	}
 	const url = getCurrentUrl();
 	const urlQ = url.searchParams.get('q') ?? '';
 	const urlMode = (url.searchParams.get('mode') ?? 'ranked') as ViewMode;
