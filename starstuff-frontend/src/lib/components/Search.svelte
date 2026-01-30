@@ -45,7 +45,7 @@
 					{#if $showClearIcon}
 						<button
 							type="button"
-							onclick={handleClear}
+							onclick={() => handleClear()}
 							class="absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center rounded p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
 							title="Clear search"
 							aria-label="Clear search"

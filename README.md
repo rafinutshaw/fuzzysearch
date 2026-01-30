@@ -6,9 +6,7 @@ A full-stack fuzzy search application with **ranked** and **grouped** result vie
 
 ## 📺 Demo
 
-<video src="demo.mp4" width="100%" controls muted autoplay loop>
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/f9b99ecb-0ae2-4900-989e-b1b831966209
 
 ---
 
