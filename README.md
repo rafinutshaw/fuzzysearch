@@ -9,7 +9,7 @@ A full-stack fuzzy search application with **ranked** and **grouped** result vie
 <video src="docs/demo.mp4" width="100%" controls muted autoplay loop>
   Your browser does not support the video tag.
 </video>
-
+![Starstuff Demo](docs/demo.mp4)
 ---
 
 ## How to Start the Project
