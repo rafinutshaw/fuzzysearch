@@ -5,32 +5,35 @@ import {
 	type GroupedSearchResult,
 	type RankedSearchResult
 } from '../schemas/searchSchema';
+import { ZodError } from 'zod';
 
-// Define a type for the Grouped result structure
+type SearchResultUseCase = {
+	results: RankedSearchResult | GroupedSearchResult | null;
+	error: string | null;
+};
 
-/**
- * Orchestrates the search flow:
- * Fetch -> Validate -> Transform
- */
-export async function rankedSearchUseCase(
-	query: string,
-	page: number
-): Promise<RankedSearchResult | GroupedSearchResult> {
-	let rawData = await searchService.fetchRankedResults(query, page);
-	// .parse returns the data with the correct TypeScript type inferred
-	const validatedData = RankedSearchResultSchema.parse(rawData);
-	// Return ranked (flat) results
-	return validatedData;
+function errorHandler(error: unknown, defaultMessage: string): string {
+	if (error instanceof ZodError) return defaultMessage;
+	return error instanceof Error ? error.message : defaultMessage;
 }
 
-export async function groupedSearchUseCase(
+export async function searchUseCase(
 	query: string,
 	page: number,
-	index: string
-): Promise<RankedSearchResult | GroupedSearchResult> {
-	let rawData = await searchService.fetchGroupedResults(query, page, index);
-	// .parse returns the data with the correct TypeScript type inferred
-	const validatedData = GroupedSearchResultSchema.parse(rawData);
-	// Return ranked (flat) results
-	return validatedData;
+	index: string,
+	mode: 'grouped' | 'ranked'
+): Promise<SearchResultUseCase> {
+	try {
+		let rawData = await searchService.fetchSearchResults(query, page, index, mode);
+		const validatedData =
+			mode === 'ranked'
+				? RankedSearchResultSchema.parse(rawData)
+				: GroupedSearchResultSchema.parse(rawData);
+		return { results: validatedData, error: null };
+	} catch (error) {
+		return {
+			results: null,
+			error: errorHandler(error, 'Something went wrong while parsing search results')
+		};
+	}
 }

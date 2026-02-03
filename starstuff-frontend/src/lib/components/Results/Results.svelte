@@ -15,7 +15,13 @@
 		>
 			Start a search to see results
 		</div>
-	{:else if mode === 'grouped'}
+	{:else if $searchStore.error}
+		<div
+			class="overflow-hidden rounded-xl border border-slate-200 bg-white p-4 font-bold text-red-400 shadow-sm"
+		>
+			{$searchStore.error}
+		</div>
+	{:else if mode === 'grouped' && !$searchStore.error}
 		<GroupedResults />
 	{:else}
 		<RankedResults />

@@ -6,33 +6,16 @@ import {
 } from "../schemas/search.schema.js";
 import { SearchService } from "../services/search.service.js";
 
-export const getRanked = async (
+export const getFizzySearch = async (
   req: Request,
-  res: Response<RankedSearchResult>,
+  res: Response<GroupedSearchResult | RankedSearchResult>,
 ) => {
-  try {
-    const { q, page } = req.query as any as SearchQuery;
-    const result = await SearchService.getRankedResults(q, page);
-    res.json(result);
-  } catch (error: any) {
-    res
-      .status(500)
-      .json({ status: "error", data: [], message: error.message } as any);
-  }
-};
+  const { q, page, index, mode } = req.query as any as SearchQuery;
 
-export const getGrouped = async (
-  req: Request,
-  res: Response<GroupedSearchResult>,
-) => {
-  try {
-    const { q, page, index } = req.query as any as SearchQuery;
-
-    const result = await SearchService.getGroupedResults(q, page, index);
-    res.json(result);
-  } catch (error: any) {
-    res
-      .status(500)
-      .json({ status: "error", data: [], message: error.message } as any);
-  }
+  const result =
+    mode === "ranked"
+      ? await SearchService.getRankedResults(q, page)
+      : await SearchService.getGroupedResults(q, page, index);
+  res.json(result);
+  return;
 };

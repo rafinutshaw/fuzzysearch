@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { groupedSearchUseCase, rankedSearchUseCase } from '$lib/core/useCases/searchUseCase';
+import { searchUseCase } from '$lib/core/useCases/searchUseCase';
 import type { GroupedSearchResult, RankedSearchResult } from '$lib/core/schemas/searchSchema';
 
 interface SearchState {
@@ -33,8 +33,14 @@ function createSearchStore() {
 			update((s) => ({ ...s, loading: true, error: null, query, mode: 'ranked' }));
 
 			try {
-				const data = await rankedSearchUseCase(query, page);
-				update((s) => ({ ...s, results: data, loading: false, mode: 'ranked' }));
+				const data = await searchUseCase(query, page, '', 'ranked');
+				update((s) => ({
+					...s,
+					error: data.error,
+					results: data.results,
+					loading: false,
+					mode: 'ranked'
+				}));
 			} catch (err: any) {
 				update((s) => ({
 					...s,
@@ -57,11 +63,12 @@ function createSearchStore() {
 			}));
 
 			try {
-				const data = await groupedSearchUseCase(query, page, loadingIndex);
+				const data = await searchUseCase(query, page, loadingIndex, 'grouped');
 				if (!loadingIndex)
 					update((s) => ({
 						...s,
-						results: data,
+						error: data.error,
+						results: data.results,
 						loading: false,
 						mode: 'grouped',
 						loadingIndex: ''
@@ -69,7 +76,7 @@ function createSearchStore() {
 				else {
 					update((s) => ({
 						...s,
-						results: { ...s.results, ...data },
+						results: { ...s.results, ...data.results },
 						loading: false,
 						mode: 'grouped',
 						loadingIndex: ''

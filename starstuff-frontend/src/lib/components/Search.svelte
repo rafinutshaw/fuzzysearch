@@ -7,7 +7,6 @@
 		viewModeStore,
 		isValid,
 		showClearIcon,
-		hasValidationError,
 		initFromUrl,
 		runSearch,
 		startDebouncedSearch,

@@ -18,10 +18,6 @@ export const isTooShort = derived(
 	($q) => $q.length > 0 && $q.length < MIN_QUERY_LENGTH
 );
 export const showClearIcon = derived(queryStore, ($q) => $q.length > 0);
-export const hasValidationError = derived(
-	[isTooShort, touchedStore, queryStore],
-	([$isTooShort, $touched, $query]) => $isTooShort || ($touched && $query.length === 0)
-);
 
 let debounceId: ReturnType<typeof setTimeout> | null = null;
 

@@ -5,6 +5,7 @@ export const SearchQuerySchema = z.object({
     q: z.string().min(1, "Query must be at least 1 character").default(""),
     page: z.coerce.number().int().positive().default(1),
     index: z.string().optional().default(""),
+    mode: z.enum(["ranked", "grouped"]).default("grouped"),
   }),
 });
 
