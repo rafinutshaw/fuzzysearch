@@ -59,16 +59,16 @@ On startup, the backend seeds SQLite and Meilisearch with ~10,000 mock records (
 
 ### Backend (`starstuff-backend/`)
 
-| Layer / Area    | Path / Role                                                                                          |
-| --------------- | ---------------------------------------------------------------------------------------------------- |
-| **Entry**       | `src/server.ts` — starts HTTP server; `src/app.ts` — Express app, CORS, JSON, routes, seed.          |
-| **Routes**      | `src/routes/search.routes.ts` — `/api/search/ranked`, `/api/search/grouped`.                         |
-| **Middleware**  | `src/middleware/validate.ts` — Zod-based query validation; returns 400 with error details.           |
-| **Controllers** | `src/controllers/search.controller.ts` — `getRanked`, `getGrouped`; call services, send JSON or 500. |
-| **Services**    | `src/services/search.service.ts` — Meilisearch multi-search (ranked/grouped).                        |
-| **Schemas**     | `src/schemas/search.schema.ts` — Zod schemas and TypeScript types for query and responses.           |
-| **Config**      | `src/config/meilisearch.ts` — MeiliSearch client (host, API key from env).                           |
-| **Seed**        | `src/seed.ts` — SQLite + Meilisearch reset and ~10k record seed.                                     |
+| Layer / Area    | Path / Role                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| **Entry**       | `src/server.ts` — starts HTTP server; `src/app.ts` — Express app, CORS, JSON, routes, seed. |
+| **Routes**      | `src/routes/search.routes.ts` — `/api/search/?..`.                                          |
+| **Middleware**  | `src/middleware/validate.ts` — Zod-based query validation; returns 400 with error details.  |
+| **Controllers** | `src/controllers/search.controller.ts` — `getFizzySearch`; call services, send JSON or 500. |
+| **Services**    | `src/services/search.service.ts` — Meilisearch multi-search (ranked/grouped).               |
+| **Schemas**     | `src/schemas/search.schema.ts` — Zod schemas and TypeScript types for query and responses.  |
+| **Config**      | `src/config/meilisearch.ts` — MeiliSearch client (host, API key from env).                  |
+| **Seed**        | `src/seed.ts` — SQLite + Meilisearch reset and ~10k record seed.                            |
 
 **Tech:** Node.js, Express 5, TypeScript, Zod, Meilisearch SDK, better-sqlite3, Faker (seed), dotenv, cors.  
 **Runtime:** ESM; `tsx` for dev, `tsc` then `node dist/server.js` for production.
@@ -80,8 +80,8 @@ On startup, the backend seeds SQLite and Meilisearch with ~10,000 mock records (
 | **Routes / Pages**     | `src/routes/+layout.svelte`, `+page.svelte` — layout, main page; `layout.css` — Tailwind entry.                                                                                                                                             |
 | **Components**         | `src/lib/components/` — `Search.svelte`, `Header.svelte`, `Paginator.svelte`, `Accordion.svelte`; `Results/` — `Results.svelte`, `RankedResults.svelte`, `GroupedResults.svelte`, `ListItems.svelte`, `Loading.svelte`, `NoResults.svelte`. |
 | **Stores (ViewModel)** | `src/lib/stores/searchViewModel.ts` — single source of truth: `results`, `loading`, `error`; `executeRankedSearch`, `executeGroupedSearch`.                                                                                                 |
-| **Use cases**          | `src/lib/core/useCases/searchUseCase.ts` — `rankedSearchUseCase`, `groupedSearchUseCase`: fetch → validate with Zod → return typed data.                                                                                                    |
-| **Services**           | `src/lib/core/services/SearchService.ts` — `fetchRankedResults`, `fetchGroupedResults` (calls backend API).                                                                                                                                 |
+| **Use cases**          | `src/lib/core/useCases/searchUseCase.ts` — `searchUseCase`: fetch → validate with Zod → return typed data.                                                                                                                                  |
+| **Services**           | `src/lib/core/services/SearchService.ts` — `fetchSearchResults` (calls backend API).                                                                                                                                                        |
 | **Schemas**            | `src/lib/core/schemas/searchSchema.ts` — Zod schemas and types mirroring backend (RankedSearchResult, GroupedSearchResult).                                                                                                                 |
 | **Assets**             | `src/lib/assets/` — favicon, etc.                                                                                                                                                                                                           |
 
@@ -95,7 +95,7 @@ On startup, the backend seeds SQLite and Meilisearch with ~10,000 mock records (
 ### Backend
 
 - **Request flow:** HTTP → **Routes** → **Validation middleware** (Zod) → **Controller** → **Service** (Meilisearch) → **Controller** → **Response**.
-- **Validation:** Query params (`q`, `page`, `index`) are validated with `SearchQuerySchema`. On failure, middleware returns **400** and a structured body:
+- **Validation:** Query params (`q`, `page`, `index`, `mode`) are validated with `SearchQuerySchema`. On failure, middleware returns **400** and a structured body:
   ```json
   { "status": "error", "errors": [{ "path": "q", "message": "..." }] }
   ```
