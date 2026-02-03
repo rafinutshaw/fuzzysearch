@@ -53,7 +53,7 @@ function scheduleDebouncedSearch(getCurrentUrl: () => URL, debounceMs: number): 
 	const q = get(queryStore).trim();
 	const mode = get(viewModeStore);
 	if (q.length < MIN_QUERY_LENGTH) {
-		handleClear(false);
+		handleClear();
 		return;
 	}
 	const url = getCurrentUrl();
@@ -91,10 +91,9 @@ export function handleSubmit(currentUrl: URL, e?: Event): void {
 	if (q.length >= MIN_QUERY_LENGTH) runSearch(currentUrl, q, mode);
 }
 
-export async function handleClear(clearViewMode: boolean = true): Promise<void> {
+export async function handleClear(): Promise<void> {
 	cancelDebounce();
 	queryStore.set('');
-	clearViewMode && viewModeStore.set('ranked');
 	touchedStore.set(false);
 	searchStore.clearSearch();
 	await goto('/', { keepFocus: true, noScroll: true });
